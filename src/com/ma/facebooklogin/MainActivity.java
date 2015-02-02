@@ -1,17 +1,49 @@
 package com.ma.facebooklogin;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.facebook.AppEventsLogger;
 
-public class MainActivity extends Activity {
+
+public class MainActivity extends FragmentActivity {
+
+  private Fragment mainFragment = null;
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+
+    // Logs 'app deactivate' App Event.
+    AppEventsLogger.deactivateApp(this);
+  }
+
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+
+    // Logs 'install' and 'app activate' App Events.
+    AppEventsLogger.activateApp(this);
+  }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.main);
+
+    if (savedInstanceState == null) {
+      // Add the fragment on initial activity setup
+      mainFragment = new MainFragment();
+      getSupportFragmentManager().beginTransaction().add(android.R.id.content, mainFragment)
+          .commit();
+    } else {
+      // Or set the fragment from restored state info
+      mainFragment =
+          (MainFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
+    }
   }
 
 
